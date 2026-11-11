@@ -41,6 +41,12 @@ MySQL. Deploy the Flask app on Render and host the database on Aiven.
 The app validates Aiven's TLS certificate when `MYSQL_SSL_CA` is set. Never
 commit database passwords or the CA certificate to this repository.
 
+If Render logs show a connection attempt to `localhost:3306`, the MySQL
+environment variables are not set on the Render web service. Add the values
+from the external MySQL provider to the Render service's **Environment**
+settings, save, and redeploy. A separate Render web service cannot use
+`localhost` to reach an external database.
+
 ## 3. Connect GitHub Pages
 
 The root `index.html` is static and cannot submit to a relative Flask endpoint.

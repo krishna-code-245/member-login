@@ -8,6 +8,23 @@ app = Flask(__name__)
 
 
 def connect_to_database():
+    if os.environ.get("RENDER") == "true":
+        required_variables = (
+            "MYSQLHOST",
+            "MYSQLPORT",
+            "MYSQLUSER",
+            "MYSQLPASSWORD",
+            "MYSQLDATABASE",
+        )
+        missing_variables = [
+            name for name in required_variables if not os.environ.get(name)
+        ]
+        if missing_variables:
+            raise ValueError(
+                "Missing required Render environment variables: "
+                + ", ".join(missing_variables)
+            )
+
     ssl_ca = os.environ.get("MYSQL_SSL_CA")
     return mysql.connector.connect(
         host=os.environ.get("MYSQLHOST", "localhost"),
