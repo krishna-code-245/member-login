@@ -41,16 +41,15 @@ commit database passwords or the CA certificate to this repository.
 ## 3. Connect GitHub Pages
 
 The root `index.html` is static and cannot submit to a relative Flask endpoint.
-After Render gives the service a public URL, change the form action in that
-file to the Render endpoint:
+The root `index.html` form is configured to submit member IDs to the deployed
+Render service:
 
 ```html
-action="https://YOUR-RENDER-SERVICE.onrender.com/member-login"
+action="https://member-login.onrender.com/member-login"
 ```
 
-Replace the example domain with the actual Render URL, then commit and push.
-You can also use the Render service URL directly; its Flask homepage already
-posts to the correct endpoint.
+GitHub Pages displays the static form; Render processes the submission and
+queries Aiven MySQL.
 
 ## Member privacy
 
