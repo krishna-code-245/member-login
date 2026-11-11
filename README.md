@@ -1,47 +1,58 @@
 # FitVerse Gym
 
-The project has two hosting targets:
+The project includes a static GitHub Pages homepage and a Flask app for live
+membership lookups. GitHub Pages cannot run Python or connect directly to
+MySQL. Deploy the Flask app on Render and host the database on Aiven.
 
-- The root `index.html` is a static GitHub Pages homepage.
-- The Flask app serves the working membership lookup and connects to MySQL.
+## 1. Create the Aiven MySQL database
 
-GitHub Pages cannot run Python or connect directly to MySQL. Use the Railway
-Flask app URL for live member lookups.
+1. Create a MySQL service in Aiven and wait until it is running.
+2. In the service's connection information, note the host, port, user, and
+   password. Keep the password private.
+3. Download the service CA certificate from Aiven's connection information.
+4. Connect with a MySQL client such as MySQL Workbench, using the Aiven host,
+   port, user, password, and downloaded CA certificate.
+5. Select the database provided by Aiven and run the `CREATE TABLE` and
+   `INSERT` statements from `gym_db.sql`. Omit `CREATE DATABASE gym_db;` and
+   `USE gym_db;` if Aiven has already created the database. Import only once;
+   the member IDs are primary keys.
 
-## Deploy Flask and MySQL on Railway
+## 2. Deploy Flask on Render
 
-1. Create a Railway project and add a MySQL service.
-2. Deploy this GitHub repository as a web service. Railway uses `requirements.txt`
-   to install packages and `Procfile` to start Gunicorn.
-3. In the Flask service's variables, add the MySQL service's values using these
-   exact variable names: `MYSQLHOST`, `MYSQLPORT`, `MYSQLUSER`, `MYSQLPASSWORD`,
-   and `MYSQLDATABASE`. Use Railway variable references or copy the values from
-   the MySQL service. Do not commit credentials or paste them into source files.
-4. Create the `members` table and import the sample rows from `gym_db.sql` into
-   the database named by `MYSQLDATABASE`. If Railway has already created a
-   database for the service, select that database and run the table and insert
-   statements from the SQL file; omit its `CREATE DATABASE` and `USE` lines.
-   Only import into a new or empty database, since the table uses a primary key.
-5. Generate a public domain for the Flask service. Open that domain and check
-   `/health`; it should return `{"status":"ok"}`. Then test a member ID.
+1. In Render, create a **Web Service** from the GitHub repository
+   `krishna-code-245/member-login`, using the `master` branch.
+2. Set the build command to `pip install -r requirements.txt` and the start
+   command to `gunicorn app:app`.
+3. In the Render service's **Environment** settings, add:
+   - `MYSQLHOST`: Aiven MySQL host
+   - `MYSQLPORT`: Aiven MySQL port
+   - `MYSQLUSER`: Aiven MySQL user
+   - `MYSQLPASSWORD`: Aiven MySQL password
+   - `MYSQLDATABASE`: the database selected for the member table
+4. In Render's **Secret Files**, upload the Aiven CA certificate, for example
+   as `aiven-ca.pem`. Add the environment variable `MYSQL_SSL_CA` with the
+   path `/etc/secrets/aiven-ca.pem`.
+5. Save the settings and deploy. Open the Render service URL followed by
+   `/health`; it should return `{"status":"ok"}`. Then test with a member ID.
 
-The application defaults to `localhost` and the `gym_db` database for local
-development. Railway connection settings come from environment variables.
+The app validates Aiven's TLS certificate when `MYSQL_SSL_CA` is set. Never
+commit database passwords or the CA certificate to this repository.
 
-## Connect the GitHub Pages form to Railway
+## 3. Connect GitHub Pages
 
-After Railway gives the Flask service a public domain, update the `action` on
-the membership form in the root `index.html` to:
+The root `index.html` is static and cannot submit to a relative Flask endpoint.
+After Render gives the service a public URL, change the form action in that
+file to the Render endpoint:
 
 ```html
-action="https://YOUR-RAILWAY-DOMAIN/member-login"
+action="https://YOUR-RENDER-SERVICE.onrender.com/member-login"
 ```
 
-Replace `YOUR-RAILWAY-DOMAIN` with the actual domain, then commit and push that
-change. The Railway-hosted homepage already posts to its own Flask endpoint.
+Replace the example domain with the actual Render URL, then commit and push.
+You can also use the Render service URL directly; its Flask homepage already
+posts to the correct endpoint.
 
 ## Member privacy
 
-The lookup currently uses member ID as its only check. Before using real member
-records, add a second verification factor and avoid loading real records into
-public sample SQL or a public repository.
+The lookup currently checks only a member ID. Before using real records, add a
+second verification factor and keep real member data out of public repositories.

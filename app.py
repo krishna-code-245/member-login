@@ -15,6 +15,8 @@ def connect_to_database():
         password=os.environ.get("MYSQLPASSWORD", ""),
         database=os.environ.get("MYSQLDATABASE", "gym_db"),
         connection_timeout=10,
+        ssl_ca=os.environ.get("MYSQL_SSL_CA"),
+        ssl_verify_cert=bool(os.environ.get("MYSQL_SSL_CA")),
     )
 
 
