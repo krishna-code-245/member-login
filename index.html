@@ -6,29 +6,18 @@
     <meta name="theme-color" content="#07111b">
     <meta name="description" content="FitVerse Gym membership portal.">
     <title>FitVerse Gym | Membership Portal</title>
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='login.css') }}">
+    <link rel="stylesheet" href="login.css">
 </head>
 <body>
     <main class="page">
         <section class="portal" aria-labelledby="page-title">
             <p class="eyebrow">FITVERSE GYM</p>
-            <h1 id="page-title">
-                {% if member %}{{ member.member_name }}{% else %}Your next level starts here.{% endif %}
-            </h1>
+            <h1 id="page-title">Your next level starts here.</h1>
             <p class="intro">
                 Welcome to the FitVerse membership portal. We're glad you're part of the
                 community.
             </p>
 
-            {% if member %}
-            <div class="notice">
-                <h2>Membership Profile</h2>
-                <p>ID: {{ member.member_id }}</p>
-                <p>Membership: {{ member.membership_type }}</p>
-                <p>Days Remaining: {{ days_left }}</p>
-            </div>
-            {% else %}
             <form class="login-form" action="/member-login" method="POST">
                 <label for="member-id">Membership ID</label>
                 <input
@@ -43,11 +32,10 @@
             <div class="notice">
                 <h2>Member lookup needs a Flask server</h2>
                 <p>
-                    GitHub Pages cannot process this form. Host the Flask app and database
-                    on a server to enable member profile lookups.
+                    This form works when the Flask app and database are running. GitHub
+                    Pages only hosts static files and cannot process member lookups.
                 </p>
             </div>
-            {% endif %}
 
             <p class="footnote">Train strong. Stay consistent. Be FitVerse.</p>
         </section>
