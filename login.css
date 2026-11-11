@@ -58,6 +58,53 @@ h1 {
     line-height: 1.7;
 }
 
+.login-form {
+    display: grid;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.login-form label {
+    font-weight: 700;
+}
+
+.login-form input {
+    width: 100%;
+    min-height: 52px;
+    padding: 14px 16px;
+    border: 1px solid rgba(255, 255, 255, 0.24);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.08);
+    color: #f5f8fa;
+    font: inherit;
+}
+
+.login-form input::placeholder {
+    color: #aab8c1;
+}
+
+.login-form input:focus-visible,
+.login-btn:focus-visible {
+    outline: 3px solid #00e5ff;
+    outline-offset: 3px;
+}
+
+.login-btn {
+    min-height: 52px;
+    padding: 14px 18px;
+    border: 0;
+    border-radius: 10px;
+    background: #00e5ff;
+    color: #07111b;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.login-btn:hover {
+    background: #71f0ff;
+}
+
 .notice {
     padding: 22px;
     border-left: 3px solid #00e5ff;
@@ -86,4 +133,26 @@ h1 {
     .portal {
         border-radius: 18px;
     }
+}
+.login-btn{
+    width:100%;
+    padding:15px;
+
+    background:#00e5ff;
+    color:black;
+
+    border:none;
+    border-radius:10px;
+
+    font-size:18px;
+    font-weight:bold;
+
+    cursor:pointer;
+
+    transition:0.3s;
+}
+
+.login-btn:hover{
+    background:#00bcd4;
+    transform:scale(1.03);
 }

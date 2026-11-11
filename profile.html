@@ -14,7 +14,19 @@
 
 <p>Membership Type: {{ member.membership_type }}</p>
 
+<p>Expiry Date: {{ member.expiry_date.strftime('%Y-%m-%d') }}</p>
+
 <p>Days Remaining: {{ days_left }}</p>
 
+<script>
+    const memberDetails = [
+        ["Name", {{ member.member_name|tojson }}],
+        ["Member ID", {{ member.member_id|tojson }}],
+        ["Membership Type", {{ member.membership_type|tojson }}],
+        ["Expiry Date", {{ member.expiry_date.strftime('%Y-%m-%d')|tojson }}],
+        ["Days Remaining", {{ days_left|tojson }}]
+    ];
+    window.alert(memberDetails.map(([label, value]) => `${label}: ${value}`).join("\n"));
+</script>
 </body>
 </html>
