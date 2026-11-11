@@ -33,7 +33,10 @@ MySQL. Deploy the Flask app on Render and host the database on Aiven.
    as `aiven-ca.pem`. Add the environment variable `MYSQL_SSL_CA` with the
    path `/etc/secrets/aiven-ca.pem`.
 5. Save the settings and deploy. Open the Render service URL followed by
-   `/health`; it should return `{"status":"ok"}`. Then test with a member ID.
+   `/health`; it checks both the database connection and the `members` table,
+   returning `{"status":"ok"}` only when both work. If it returns an error,
+   read the Render service logs for the database exception. Then test with a
+   member ID.
 
 The app validates Aiven's TLS certificate when `MYSQL_SSL_CA` is set. Never
 commit database passwords or the CA certificate to this repository.

@@ -8,6 +8,7 @@ app = Flask(__name__)
 
 
 def connect_to_database():
+    ssl_ca = os.environ.get("MYSQL_SSL_CA")
     return mysql.connector.connect(
         host=os.environ.get("MYSQLHOST", "localhost"),
         port=int(os.environ.get("MYSQLPORT", "3306")),
@@ -15,9 +16,13 @@ def connect_to_database():
         password=os.environ.get("MYSQLPASSWORD", ""),
         database=os.environ.get("MYSQLDATABASE", "gym_db"),
         connection_timeout=10,
-        ssl_ca=os.environ.get("MYSQL_SSL_CA"),
-        ssl_verify_cert=bool(os.environ.get("MYSQL_SSL_CA")),
+        ssl_ca=ssl_ca,
+        ssl_verify_cert=bool(ssl_ca),
     )
+
+
+def database_error_response(message):
+    return render_template("error.html", message=message), 503
 
 
 @app.get("/")
@@ -31,8 +36,9 @@ def member_login():
     if not member_id:
         return render_template("error.html", message="Enter a membership ID."), 400
 
-    connection = connect_to_database()
+    connection = None
     try:
+        connection = connect_to_database()
         with connection.cursor(dictionary=True) as cursor:
             cursor.execute(
                 "SELECT member_id, member_name, membership_type, expiry_date "
@@ -40,8 +46,14 @@ def member_login():
                 (member_id,),
             )
             member = cursor.fetchone()
+    except (mysql.connector.Error, ValueError):
+        app.logger.exception("Member lookup failed; check the Render MySQL settings and members table.")
+        return database_error_response(
+            "The member database is temporarily unavailable. Please try again later."
+        )
     finally:
-        connection.close()
+        if connection is not None:
+            connection.close()
 
     if member is not None:
         days_left = (member["expiry_date"] - date.today()).days
@@ -55,6 +67,21 @@ def member_login():
 
 @app.get("/health")
 def health():
+    connection = None
+    try:
+        connection = connect_to_database()
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT 1 FROM members LIMIT 1")
+    except (mysql.connector.Error, ValueError):
+        app.logger.exception("Database health check failed; check the Render MySQL settings and members table.")
+        return {
+            "status": "error",
+            "message": "Database unavailable. Check Render MySQL settings and the members table.",
+        }, 503
+    finally:
+        if connection is not None:
+            connection.close()
+
     return {"status": "ok"}
 
 
