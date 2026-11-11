@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Member Not Found | FitVerse Gym</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}">
+</head>
+<body>
+    <main class="page">
+        <section class="portal error-page">
+            <img
+                class="error-image"
+                src="{{ url_for('static', filename='images/ERROR 404_ Vision not found !.jpeg') }}"
+                alt="">
+            <h1>Membership lookup</h1>
+            <p class="intro">{{ message }}</p>
+            <a class="back-link" href="{{ url_for('home') }}">Try again</a>
+        </section>
+    </main>
+</body>
+</html>

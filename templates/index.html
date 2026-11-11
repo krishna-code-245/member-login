@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#07111b">
+    <title>FitVerse Gym | Membership Portal</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}">
+</head>
+<body>
+    <main class="page">
+        <section class="portal" aria-labelledby="page-title">
+            <p class="eyebrow">FITVERSE GYM</p>
+            <h1 id="page-title">Your next level starts here.</h1>
+            <p class="intro">
+                Welcome to the FitVerse membership portal. Enter your member ID to view
+                your membership details.
+            </p>
+
+            <form class="login-form" action="{{ url_for('member_login') }}" method="POST">
+                <label for="member-id">Membership ID</label>
+                <input
+                    id="member-id"
+                    type="text"
+                    name="member_id"
+                    placeholder="Enter Membership ID"
+                    autocomplete="username"
+                    required>
+                <button type="submit" class="login-btn">View Profile</button>
+            </form>
+
+            <p class="footnote">Train strong. Stay consistent. Be FitVerse.</p>
+        </section>
+    </main>
+</body>
+</html>
